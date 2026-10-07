@@ -68,7 +68,20 @@ html, body {
 /* ─── Section ───────────────────────────────────────────────── */
 
 .se-section {
-  margin-bottom: 32px;
+  margin-bottom: 24px;
+}
+
+.se-section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0 0 16px;
+  cursor: pointer;
+  outline: none;
 }
 
 .se-section-title {
@@ -77,8 +90,18 @@ html, body {
   letter-spacing: 0.2em;
   text-transform: uppercase;
   color: rgba(255, 255, 255, 0.22);
-  margin: 0 0 20px;
   user-select: none;
+}
+
+.se-section-arrow {
+  font-size: 9px;
+  color: rgba(255, 255, 255, 0.18);
+  user-select: none;
+  transition: opacity 120ms ease;
+}
+
+.se-section-body--collapsed {
+  display: none;
 }
 
 /* ─── Field row ─────────────────────────────────────────────── */
@@ -288,6 +311,7 @@ html, body {
   color: rgba(255, 255, 255, 0.55);
 }
 
+.se-info-key {
   font-size: 9px;
   font-weight: 500;
   letter-spacing: 0.12em;
@@ -326,4 +350,143 @@ html, body {
 
 .se-hint--hidden {
   opacity: 0;
+}
+
+/* ─── Select widget ─────────────────────────────────────────── */
+
+.se-select {
+  -webkit-appearance: none;
+  appearance: none;
+  display: block;
+  width: 100%;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 2px;
+  color: rgba(255, 255, 255, 0.65);
+  font-family: 'Inter', sans-serif;
+  font-size: 11px;
+  font-weight: 400;
+  padding: 5px 22px 5px 8px;
+  cursor: pointer;
+  outline: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='rgba(255,255,255,0.3)'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+  background-size: 8px 5px;
+}
+
+.se-select:focus {
+  border-color: rgba(255, 255, 255, 0.28);
+}
+
+.se-select option {
+  background: #111;
+}
+
+/* ─── Reset button ──────────────────────────────────────────── */
+
+.se-reset-btn {
+  display: block;
+  width: 100%;
+  margin-top: 8px;
+  padding: 8px 0;
+  background: none;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 2px;
+  color: rgba(255, 255, 255, 0.35);
+  font-family: 'Inter', sans-serif;
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: border-color 120ms ease, color 120ms ease;
+}
+
+.se-reset-btn:hover {
+  border-color: rgba(255, 255, 255, 0.28);
+  color: rgba(255, 255, 255, 0.65);
+}
+
+/* ─── Near-plane warning ────────────────────────────────────── */
+
+.se-warning {
+  font-size: 9px;
+  font-weight: 400;
+  color: rgba(255, 200, 80, 0.85);
+  margin: 0 0 14px;
+  line-height: 1.5;
+}
+
+.se-warning--hidden {
+  display: none;
+}
+
+/* ─── Storage notice ────────────────────────────────────────── */
+
+.se-storage-notice {
+  font-size: 9px;
+  font-weight: 400;
+  color: rgba(255, 200, 80, 0.7);
+  margin: 0 0 20px;
+  line-height: 1.5;
+}
+
+/* ─── Debug overlay ─────────────────────────────────────────── */
+
+.se-debug {
+  position: fixed;
+  right: 0;
+  top: 0;
+  width: 200px;
+  background: rgba(8, 8, 8, 0.92);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+  border-left: 1px solid rgba(255, 255, 255, 0.07);
+  padding: 18px 20px 20px;
+  z-index: 30;
+  pointer-events: none;
+}
+
+.se-debug--hidden {
+  display: none;
+}
+
+.se-debug-title {
+  font-size: 8px;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(100, 255, 130, 0.5);
+  margin: 0 0 12px;
+}
+
+.se-debug-sep {
+  height: 1px;
+  background: rgba(255, 255, 255, 0.06);
+  margin: 8px 0;
+}
+
+.se-debug-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 4px;
+}
+
+.se-debug-key {
+  font-size: 9px;
+  font-weight: 400;
+  letter-spacing: 0.06em;
+  color: rgba(255, 255, 255, 0.28);
+  flex-shrink: 0;
+}
+
+.se-debug-val {
+  font-size: 9px;
+  font-weight: 300;
+  color: rgba(255, 255, 255, 0.7);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.04em;
+  text-align: right;
+  word-break: break-all;
 }

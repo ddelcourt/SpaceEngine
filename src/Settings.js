@@ -2,33 +2,33 @@ export class Settings {
   constructor() {
     this.schema = {
       view: {
-        aspectRatio: { type: 'select', default: 'Fill', options: ['Fill', '16:9', '4:3', '1:1', '21:9'] },
-        fov: { type: 'number', default: 75, min: 45, max: 170 },
-        near: { type: 'number', default: 0.05, min: 0.01, max: 1 },
-        far: { type: 'number', default: 500, min: 100, max: 1000 },
-        gridFadeDistance: { type: 'number', default: 50, min: 10, max: 100 },
+        aspectRatio: { type: 'select', default: 'Fill', options: ['Fill', '16:9', '4:3', '4:1', '1:1', '21:9'] },
+        fov: { type: 'number', default: 75, min: 30, max: 110, step: 1 },
+        near: { type: 'number', default: 0.05, min: 0.01, max: 1.0, step: 0.01 },
+        far: { type: 'number', default: 500, min: 100, max: 1000, step: 1 },
+        gridFadeDistance: { type: 'number', default: 50, min: 10, max: 100, step: 1 },
       },
       movement: {
-        speed: { type: 'number', default: 9, min: 1, max: 20 },
-        lookSensitivity: { type: 'number', default: 1, min: 0.1, max: 3 },
+        speed: { type: 'number', default: 9, min: 1, max: 20, step: 1 },
+        lookSensitivity: { type: 'number', default: 1, min: 0.1, max: 3.0, step: 0.05 },
       },
       objects: {
         count: {
-          cube: { type: 'number', default: 1, min: 0, max: 25 },
-          pyramid: { type: 'number', default: 1, min: 0, max: 25 },
-          cone: { type: 'number', default: 1, min: 0, max: 25 },
-          sphere: { type: 'number', default: 1, min: 0, max: 25 },
+          cube: { type: 'number', default: 1, min: 0, max: 25, step: 1 },
+          pyramid: { type: 'number', default: 1, min: 0, max: 25, step: 1 },
+          cone: { type: 'number', default: 1, min: 0, max: 25, step: 1 },
+          sphere: { type: 'number', default: 1, min: 0, max: 25, step: 1 },
         },
       },
       interaction: {
-        hotspot: { type: 'number', default: 0.5, min: 0.2, max: 2.0 },
+        hotspot: { type: 'number', default: 0.5, min: 0.2, max: 2.0, step: 0.1 },
       },
       debug: {
         enabled: { type: 'boolean', default: false },
       },
       ui: {
         paneOpen: { type: 'boolean', default: true },
-        sectionsOpen: { type: 'object', default: { view: true, movement: true, objects: true, debug: true } },
+        sectionsOpen: { type: 'object', default: { view: true, movement: true, objects: true, interaction: true, debug: true } },
         showUvGuides: { type: 'boolean', default: true },
         applyToAll: { type: 'boolean', default: false },
       },

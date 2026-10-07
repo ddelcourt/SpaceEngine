@@ -311,6 +311,54 @@ Acceptance checks:
 
 ---
 
+### Phase 9 — Non-perspective projection modes (deferred)
+
+Goal: enable immersive / circular / dome projection as an alternative to the standard pinhole camera.
+
+Background:
+Standard perspective (`p.perspective()`) is mathematically limited to just below 180°: as FOV approaches 180° the projection matrix becomes degenerate (`tan(FOV/2) → ∞`) and geometry collapses. True wide-angle and omni-directional projection requires replacing the projection entirely with a custom GLSL shader pass.
+
+Projection types to support:
+
+| Mode | Coverage | Use case |
+| :--- | :--- | :--- |
+| `perspective` | up to ~170° | current default |
+| `fisheye-equidistant` | 180° → 360° (circular) | planetarium dome, immersive art |
+| `fisheye-stereographic` | ~270° | ultra-wide immersive |
+| `equirectangular` | full 360°×180° | 360° panorama / video |
+
+Implementation approach:
+1. Render the full 3D scene to an offscreen `p5.Graphics` framebuffer (perspective, normal FOV) each frame.
+2. Apply a fullscreen quad fragment shader that reads the framebuffer as a texture and warps it through the chosen projection formula.
+3. For equirectangular/360°: render six perspective passes (cube faces) into a cubemap, then sample with standard equirectangular UV math in the final shader.
+4. Add `projection.mode` (select) and `projection.fisheye.fov` (number, 180–360) to the settings schema. The View section in the control pane picks up the new entries automatically.
+
+Tasks:
+- 9.1 Add `projection.mode` and `projection.fisheye.fov` to the settings schema.
+- 9.2 Create `ProjectionPass.js` — manages the offscreen framebuffer and owns the active shader.
+- 9.3 Write `fisheye.vert` / `fisheye.frag` GLSL shaders (equidistant and stereographic variants).
+- 9.4 Write `equirect.vert` / `equirect.frag` for cubemap-based 360° output.
+- 9.5 Wire `ProjectionPass` into `Engine.draw()` before the HUD layer.
+- 9.6 Handle aspect ratio and canvas resize correctly for circular output (canvas becomes square for dome mode).
+- 9.7 Expose a `projection.circular.diameter` setting (fraction of shorter viewport dimension) for the dome circle radius.
+- 9.8 Validate at 60 fps with maximum object count.
+
+Dependencies:
+- Phase 8 (Polish and QA) should be complete first.
+- Requires p5.js shader API (`p.shader()`, `p.createGraphics()`, `p.createShader()`).
+
+Definition of done:
+- Switching from `perspective` to `fisheye` in the pane warps the view live into a circular dome projection with no frame-rate drop.
+- Switching to `equirectangular` renders a full 360° panorama band.
+- Switching back to `perspective` restores the normal view exactly.
+
+Key risks:
+- p5.js framebuffer API differences between versions — pin and test carefully.
+- Six-pass cubemap rendering is expensive; may need to limit object count or reduce resolution in that mode.
+- GLSL precision issues at very high fisheye FOV values (>300°).
+
+---
+
 ## 5. Recommended execution cadence
 
 Use this rhythm for each phase:
