@@ -23,6 +23,15 @@ export class KeyboardMouseInput {
         return;
       }
 
+      if (event.code === 'Enter') {
+        if (!document.fullscreenElement) {
+          document.documentElement.requestFullscreen().catch(() => {});
+        } else {
+          document.exitFullscreen().catch(() => {});
+        }
+        return;
+      }
+
       this.keys.add(event.code);
       if (event.code === 'KeyE') {
         this.shouldSelect = true;

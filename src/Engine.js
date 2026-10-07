@@ -86,6 +86,7 @@ export class Engine {
     this.p.frameRate(60);
     this.p.createCanvas(this.p.windowWidth, this.p.windowHeight, this.p.WEBGL);
     this.keyboardMouseInput.attach();
+    document.addEventListener('fullscreenchange', () => this.resize());
     this.controlPane.mount();
     this.infoPanel.mount();
     this.reticle.mount();

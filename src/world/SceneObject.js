@@ -38,10 +38,10 @@ export class SceneObject {
     p.noStroke();
 
     if (this.state === 'SELECTED') {
-      p.ambientMaterial(this.fill);
-      p.specularMaterial(255, 255, 255);
+      p.ambientMaterial(0, 255, 0);
+      p.specularMaterial(100, 255, 100);
       p.shininess(80);
-      p.emissiveMaterial(100, 80, 20);
+      p.emissiveMaterial(0, 120, 0);
     } else if (this.state === 'HOVER') {
       p.ambientMaterial(this.fill);
       p.specularMaterial(240, 240, 240);
@@ -72,7 +72,7 @@ export class SceneObject {
     p.translate(this.position.x, y, this.position.z);
     p.noStroke();
     if (this.state === 'SELECTED') {
-      p.emissiveMaterial(255, 200, 40);
+      p.emissiveMaterial(0, 255, 80);
     } else {
       p.emissiveMaterial(180, 180, 180);
     }
