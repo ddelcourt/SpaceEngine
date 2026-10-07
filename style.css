@@ -1,0 +1,329 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&display=swap');
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #0a0a0a;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+#app {
+  width: 100vw;
+  height: 100vh;
+}
+
+/* ─── Control Pane ─────────────────────────────────────────── */
+
+.se-pane {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 220px;
+  height: 100vh;
+  background: rgba(8, 8, 8, 0.96);
+  border-right: 1px solid rgba(255, 255, 255, 0.07);
+  overflow-y: auto;
+  overflow-x: hidden;
+  z-index: 10;
+  padding: 32px 24px 40px;
+  transform: translateX(0);
+  transition: transform 180ms cubic-bezier(0.4, 0, 0.2, 1);
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255,255,255,0.1) transparent;
+}
+
+.se-pane::-webkit-scrollbar {
+  width: 3px;
+}
+.se-pane::-webkit-scrollbar-track {
+  background: transparent;
+}
+.se-pane::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.1);
+  border-radius: 2px;
+}
+
+.se-pane--hidden {
+  transform: translateX(-100%);
+}
+
+/* ─── Title ─────────────────────────────────────────────────── */
+
+.se-title {
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.3);
+  margin: 0 0 40px;
+  user-select: none;
+}
+
+/* ─── Section ───────────────────────────────────────────────── */
+
+.se-section {
+  margin-bottom: 32px;
+}
+
+.se-section-title {
+  font-size: 8px;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.22);
+  margin: 0 0 20px;
+  user-select: none;
+}
+
+/* ─── Field row ─────────────────────────────────────────────── */
+
+.se-field {
+  margin-bottom: 20px;
+}
+
+.se-field-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 8px;
+}
+
+.se-label {
+  font-size: 11px;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.65);
+  letter-spacing: 0.01em;
+}
+
+.se-value {
+  font-size: 10px;
+  font-weight: 300;
+  color: rgba(255, 255, 255, 0.28);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
+}
+
+/* ─── Slider ────────────────────────────────────────────────── */
+
+.se-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  display: block;
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(
+    to right,
+    rgba(255,255,255,0.65) 0%,
+    rgba(255,255,255,0.65) var(--fill, 0%),
+    rgba(255,255,255,0.15) var(--fill, 0%),
+    rgba(255,255,255,0.15) 100%
+  );
+  border: none;
+  outline: none;
+  cursor: pointer;
+  margin: 4px 0 0;
+  padding: 0;
+}
+
+.se-slider::-webkit-slider-runnable-track {
+  height: 1px;
+  background: transparent;
+}
+
+.se-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #ffffff;
+  cursor: pointer;
+  margin-top: -3.5px;
+  transition: transform 100ms ease;
+}
+
+.se-slider:hover::-webkit-slider-thumb {
+  transform: scale(1.4);
+}
+
+.se-slider::-moz-range-track {
+  height: 1px;
+  background: transparent;
+  border: none;
+}
+
+.se-slider::-moz-range-thumb {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #ffffff;
+  cursor: pointer;
+  border: none;
+}
+
+/* ─── Checkbox ──────────────────────────────────────────────── */
+
+.se-checkbox-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.se-checkbox {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 12px;
+  height: 12px;
+  border: 1px solid rgba(255,255,255,0.25);
+  background: transparent;
+  cursor: pointer;
+  position: relative;
+  flex-shrink: 0;
+}
+
+.se-checkbox:checked {
+  background: rgba(255,255,255,0.85);
+  border-color: rgba(255,255,255,0.85);
+}
+
+.se-checkbox:checked::after {
+  content: '';
+  position: absolute;
+  left: 2px;
+  top: 0px;
+  width: 3px;
+  height: 6px;
+  border: 1px solid #0a0a0a;
+  border-top: none;
+  border-left: none;
+  transform: rotate(45deg);
+}
+
+/* ─── Reticle ────────────────────────────────────────────────── */
+
+.se-reticle {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(255, 255, 255, 0.8);
+  background: transparent;
+  pointer-events: none;
+  z-index: 20;
+  transition: width 80ms ease, height 80ms ease, border-color 80ms ease, background 80ms ease;
+}
+
+.se-reticle--hover {
+  width: 11px;
+  height: 11px;
+  border-color: rgba(100, 255, 130, 0.95);
+  background: rgba(100, 255, 130, 0.15);
+}
+
+/* ─── Info Panel ────────────────────────────────────────────── */
+
+.se-info-panel {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  width: 200px;
+  background: rgba(8, 8, 8, 0.96);
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
+  border-left: 1px solid rgba(255, 255, 255, 0.07);
+  padding: 24px 24px 28px;
+  z-index: 10;
+  font-family: 'Inter', sans-serif;
+  transform: translateY(0);
+  transition: transform 180ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.se-info-panel--hidden {
+  transform: translateY(100%);
+}
+
+.se-info-label {
+  font-size: 8px;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.22);
+  margin: 0 0 10px;
+  user-select: none;
+}
+
+.se-info-name {
+  font-size: 15px;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.9);
+  margin: 0 0 20px;
+  letter-spacing: 0.01em;
+}
+
+.se-info-table {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.se-info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.se-info-panel--hover .se-info-label {
+  color: rgba(100, 255, 130, 0.5);
+}
+
+.se-info-panel--hover .se-info-name {
+  color: rgba(255, 255, 255, 0.55);
+}
+
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.25);
+}
+
+.se-info-val {
+  font-size: 11px;
+  font-weight: 300;
+  color: rgba(255, 255, 255, 0.65);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
+}
+
+
+.se-hint {
+  position: fixed;
+  left: 0;
+  bottom: 24px;
+  font-family: 'Inter', sans-serif;
+  font-size: 8px;
+  font-weight: 400;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.15);
+  padding: 6px 8px;
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  transform: rotate(180deg);
+  z-index: 9;
+  user-select: none;
+  pointer-events: none;
+  transition: opacity 180ms ease;
+}
+
+.se-hint--hidden {
+  opacity: 0;
+}
