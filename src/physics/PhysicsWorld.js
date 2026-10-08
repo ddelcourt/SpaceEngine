@@ -1,11 +1,10 @@
 // Bounding-sphere radii used for 3D collision detection.
 // These match the spec's XZ collider sizes and extend that into 3D.
 const RADII = {
-  cube:     1.2,   // half-diagonal of 2×2 base
+  cube:     1.2,
   pyramid:  1.2,
   cone:     1.0,
-  sphere:   1.5,   // exact spec radius
-  cylinder: 1.0,
+  sphere:   1.5,
 };
 
 // +Y = UP in this engine. Floor is at Y = 0. Objects in the sky have positive Y.

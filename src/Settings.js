@@ -18,7 +18,6 @@ export class Settings {
           pyramid:  { type: 'number', default: 1, min: 0, max: 25, step: 1 },
           cone:     { type: 'number', default: 1, min: 0, max: 25, step: 1 },
           sphere:   { type: 'number', default: 1, min: 0, max: 25, step: 1 },
-          cylinder: { type: 'number', default: 1, min: 0, max: 25, step: 1 },
         },
       },
       interaction: {
