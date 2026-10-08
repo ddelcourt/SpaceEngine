@@ -88,7 +88,7 @@ export class Engine {
 
   setup() {
     this.p.frameRate(60);
-    this.p.createCanvas(this.p.windowWidth, this.p.windowHeight, this.p.WEBGL);
+    this.p.createCanvas(this.p.windowWidth, this.p.windowHeight, this.p.WEBGL, null, { antialias: true });
     this.keyboardMouseInput.attach();
     document.addEventListener('fullscreenchange', () => this.resize());
     this.controlPane.mount();
@@ -96,7 +96,6 @@ export class Engine {
     this.reticle.mount();
     this.debugOverlay.mount();
     this.debugOverlay.setVisible(Boolean(this.settings.get('debug.enabled')));
-    this.p.pixelDensity(1);
     this.resize();
     this.clock.begin();
     // Hand all existing physics bodies to the drop animator in random order
@@ -170,6 +169,7 @@ export class Engine {
     p.directionalLight(220, 220, 220, -1, -1, -0.5);
 
     this.cameraRig.update();
+    this.sky.drawStars(p, this.cameraRig.position);
     this.floor.draw(this.cameraRig);
     this.world.render(p);
 

@@ -3,8 +3,6 @@ import { Pyramid } from './Pyramid.js';
 import { Cone } from './Cone.js';
 import { Sphere } from './Sphere.js';
 import { Cylinder } from './Cylinder.js';
-import { CircleCollider } from '../physics/CircleCollider.js';
-import { AABBCollider } from '../physics/AABBCollider.js';
 import { PhysicsBody } from '../physics/PhysicsWorld.js';
 
 const TYPE_FACTORIES = {
@@ -24,27 +22,10 @@ const FIXED_POSITIONS = {
   cylinder: { x:  0, y: 0, z: -30 },
 };
 
-// Exact XZ collider specs per type (spec §6).
-const TYPE_COLLIDERS = {
-  cube:     { shape: 'aabb',   half: 1.0 },
-  pyramid:  { shape: 'aabb',   half: 1.0 },
-  cone:     { shape: 'circle', radius: 1.0 },
-  sphere:   { shape: 'circle', radius: 1.5 },
-  cylinder: { shape: 'circle', radius: 1.0 },
-};
-
-const MIN_GAP           = 1.5;   // minimum clear gap between object edges (spec §14)
-const PLAYER_SPAWN_DIST = 3.0;   // centre-to-centre distance to keep from spawn (spec §14)
-const FLOOR_MARGIN      = 3.0;   // distance from floor edge (spec §14)
-const FLOOR_HALF        = 50;
-const SPAWN_LIMIT       = FLOOR_HALF - FLOOR_MARGIN;  // ±47 U
-const MAX_ATTEMPTS      = 150;
 
 // Tight scatter: physics resolves final positions, so objects can start close.
 const SCATTER_LIMIT = 10;   // ±10 U XZ from origin
 const MIN_XZ_DIST   = 1.0;  // only avoid exact same-spot starts to prevent impulse explosions
-
-const PLAYER_SPAWN_XZ = { x: 0, z: 12 };  // XZ position where the player starts
 
 // Per-session nonce: positions differ between page loads but are
 // stable within a session (same index → same position on that load).
@@ -54,23 +35,6 @@ const TYPE_SEEDS = { cube: 1, pyramid: 2, cone: 3, sphere: 4, cylinder: 5 };
 function seededRand(seed) {
   const x = Math.sin(seed * 127.1 + 311.7) * 43758.5453;
   return x - Math.floor(x);
-}
-
-// Returns the actual-size XZ collider for an object already in the world.
-function objectCollider(obj) {
-  const spec = TYPE_COLLIDERS[obj.type];
-  if (!spec) return null;
-  if (spec.shape === 'circle') return new CircleCollider(obj.position.x, obj.position.z, spec.radius);
-  return new AABBCollider(obj.position.x, obj.position.z, spec.half, spec.half);
-}
-
-// Returns a clearance collider for the candidate position — expanded by MIN_GAP
-// so that a non-overlapping result guarantees at least MIN_GAP between edges.
-function clearanceCollider(type, x, z) {
-  const spec = TYPE_COLLIDERS[type];
-  if (!spec) return null;
-  if (spec.shape === 'circle') return new CircleCollider(x, z, spec.radius + MIN_GAP);
-  return new AABBCollider(x, z, spec.half + MIN_GAP, spec.half + MIN_GAP);
 }
 
 export class ObjectSpawner {

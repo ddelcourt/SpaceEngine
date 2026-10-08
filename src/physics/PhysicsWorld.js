@@ -13,6 +13,7 @@ const GRAVITY        = 22;   // U/s² — subtracted from velocity.y each frame
 const SLEEP_VEL      = 0.08; // U/s linear threshold to put a body to sleep
 const SLEEP_ANG      = 0.05; // rad/s angular threshold
 const SLEEP_FRAMES   = 30;   // consecutive frames below threshold → sleep
+const WALL_HALF      = 50;   // grid boundary — must match Floor halfSize
 
 // ─── PhysicsBody ────────────────────────────────────────────────────────────
 
@@ -98,6 +99,7 @@ export class PhysicsWorld {
       b.angularVelocity.z *= (1 - b.angDamping);
 
       this._groundCollision(b);
+      this._wallCollision(b);
     }
 
     // Body-body collision — include sleeping bodies so a fast one can wake them
@@ -142,6 +144,46 @@ export class PhysicsWorld {
     // Kill tiny bounces — settle directly on floor
     if (b.velocity.y < 0.5) {
       b.velocity.y = 0;
+    }
+  }
+
+  _wallCollision(b) {
+    const limit = WALL_HALF - b.radius;
+
+    if (b.position.x < -limit) {
+      b.position.x = -limit;
+      if (b.velocity.x < 0) {
+        b.velocity.x = -b.velocity.x * b.restitution;
+        if (Math.abs(b.velocity.x) < 0.5) b.velocity.x = 0;
+        b.sleeping = false;
+        b._sleepCount = 0;
+      }
+    } else if (b.position.x > limit) {
+      b.position.x = limit;
+      if (b.velocity.x > 0) {
+        b.velocity.x = -b.velocity.x * b.restitution;
+        if (Math.abs(b.velocity.x) < 0.5) b.velocity.x = 0;
+        b.sleeping = false;
+        b._sleepCount = 0;
+      }
+    }
+
+    if (b.position.z < -limit) {
+      b.position.z = -limit;
+      if (b.velocity.z < 0) {
+        b.velocity.z = -b.velocity.z * b.restitution;
+        if (Math.abs(b.velocity.z) < 0.5) b.velocity.z = 0;
+        b.sleeping = false;
+        b._sleepCount = 0;
+      }
+    } else if (b.position.z > limit) {
+      b.position.z = limit;
+      if (b.velocity.z > 0) {
+        b.velocity.z = -b.velocity.z * b.restitution;
+        if (Math.abs(b.velocity.z) < 0.5) b.velocity.z = 0;
+        b.sleeping = false;
+        b._sleepCount = 0;
+      }
     }
   }
 

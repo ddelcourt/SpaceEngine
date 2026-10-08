@@ -23,13 +23,4 @@ export class CameraMath {
       z: Math.sin(yaw),
     };
   }
-
-  static normalize(x, y, z) {
-    const length = Math.hypot(x, y, z) || 1;
-    return {
-      x: x / length,
-      y: y / length,
-      z: z / length,
-    };
-  }
 }

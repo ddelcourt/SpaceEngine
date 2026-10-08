@@ -30,8 +30,6 @@ export class Settings {
       ui: {
         paneOpen: { type: 'boolean', default: true },
         sectionsOpen: { type: 'object', default: { view: true, movement: true, objects: true, interaction: true, debug: true } },
-        showUvGuides: { type: 'boolean', default: true },
-        applyToAll: { type: 'boolean', default: false },
       },
     };
 
