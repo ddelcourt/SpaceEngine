@@ -2,19 +2,22 @@ import { CameraMath } from './CameraMath.js';
 import { CollisionSystem } from './physics/CollisionSystem.js';
 
 export class Player {
-  constructor(settings, cameraRig, world = null, collisionSystem = null) {
+  constructor(settings, cameraRig, world = null, collisionSystem = null, physicsWorld = null) {
     this.settings = settings;
     this.cameraRig = cameraRig;
     this.world = world;
     this.collisionSystem = collisionSystem ?? new CollisionSystem();
+    this.physicsWorld = physicsWorld;
     this.position = { x: 0, y: 1.8, z: 12 };
     this.radius = 0.5;
     this.yaw = 0;
     this.pitch = 0;
     this.velocity = { x: 0, z: 0 };
+    this._lastDt = 0.016;
   }
 
   update(intent, dt) {
+    this._lastDt = dt;
     const lookSensitivity = this.settings.get('movement.lookSensitivity') || 1;
     this.yaw -= intent.lookDX * 0.002 * lookSensitivity;
     this.pitch += intent.lookDY * 0.002 * lookSensitivity;
@@ -48,7 +51,8 @@ export class Player {
         this,
         this.position.x + subStepX,
         this.position.z + subStepZ,
-        this.world
+        this.world,
+        this.physicsWorld,
       );
 
       this.position.x = nextPosition.x;

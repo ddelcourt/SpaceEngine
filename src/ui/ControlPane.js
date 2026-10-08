@@ -25,10 +25,11 @@ const SECTIONS = [
     key: 'objects',
     title: 'Objects',
     fields: [
-      { key: 'objects.count.cube',    label: 'Cubes' },
-      { key: 'objects.count.pyramid', label: 'Pyramids' },
-      { key: 'objects.count.cone',    label: 'Cones' },
-      { key: 'objects.count.sphere',  label: 'Spheres' },
+      { key: 'objects.count.cube',     label: 'Cubes' },
+      { key: 'objects.count.pyramid',  label: 'Pyramids' },
+      { key: 'objects.count.cone',     label: 'Cones' },
+      { key: 'objects.count.sphere',   label: 'Spheres' },
+      { key: 'objects.count.cylinder', label: 'Cylinders' },
     ],
   },
   {

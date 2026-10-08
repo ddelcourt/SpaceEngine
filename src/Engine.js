@@ -9,6 +9,8 @@ import { InputManager } from './input/InputManager.js';
 import { KeyboardMouseInput } from './input/KeyboardMouseInput.js';
 import { World } from './world/World.js';
 import { ObjectSpawner } from './world/ObjectSpawner.js';
+import { DropAnimator } from './world/DropAnimator.js';
+import { PhysicsWorld } from './physics/PhysicsWorld.js';
 import { Raycaster } from './interaction/Raycaster.js';
 import { SelectionManager } from './interaction/SelectionManager.js';
 import { Reticle } from './ui/Reticle.js';
@@ -35,14 +37,16 @@ export class Engine {
     this.floor = new Floor(this.p, this.settings);
     this.world = new World();
     this.collisionSystem = new CollisionSystem();
-    this.player = new Player(this.settings, this.cameraRig, this.world, this.collisionSystem);
+    this.physicsWorld  = new PhysicsWorld();
+    this.player = new Player(this.settings, this.cameraRig, this.world, this.collisionSystem, this.physicsWorld);
 
     this.inputManager = new InputManager(this.p, this.settings);
     this.keyboardMouseInput = new KeyboardMouseInput(this.p, this.settings);
     this.inputManager.addSource(this.keyboardMouseInput);
 
     // ObjectSpawner reconciles on construction using already-loaded settings.
-    this.objectSpawner = new ObjectSpawner(this.world, this.settings);
+    this.objectSpawner = new ObjectSpawner(this.world, this.settings, this.physicsWorld);
+    this.dropAnimator  = new DropAnimator(this.physicsWorld);
 
     this.raycaster = new Raycaster(this.cameraRig, this.world, this.settings);
     this.selectionManager = new SelectionManager();
@@ -95,6 +99,14 @@ export class Engine {
     this.p.pixelDensity(1);
     this.resize();
     this.clock.begin();
+    // Hand all existing physics bodies to the drop animator in random order
+    // so volumes of different types fall interleaved rather than type-by-type.
+    const bodies = [...this.physicsWorld.bodies];
+    for (let i = bodies.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [bodies[i], bodies[j]] = [bodies[j], bodies[i]];
+    }
+    this.dropAnimator.init(bodies);
   }
 
   resize() {
@@ -134,6 +146,9 @@ export class Engine {
   update() {
     const dt = this.clock.update();
     if (dt <= 0) return;
+
+    this.dropAnimator.update(dt);
+    this.physicsWorld.step(dt);
 
     const intent = this.inputManager.getIntent();
     this.player.update(intent, dt);

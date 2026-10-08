@@ -2,30 +2,35 @@ import { Cube } from './Cube.js';
 import { Pyramid } from './Pyramid.js';
 import { Cone } from './Cone.js';
 import { Sphere } from './Sphere.js';
+import { Cylinder } from './Cylinder.js';
 import { CircleCollider } from '../physics/CircleCollider.js';
 import { AABBCollider } from '../physics/AABBCollider.js';
+import { PhysicsBody } from '../physics/PhysicsWorld.js';
 
 const TYPE_FACTORIES = {
   cube: Cube,
   pyramid: Pyramid,
   cone: Cone,
   sphere: Sphere,
+  cylinder: Cylinder,
 };
 
 // First instance of each type always uses its canonical scene position (spec §6).
 const FIXED_POSITIONS = {
-  cube:    { x: -5, y: 0, z: -10 },
-  pyramid: { x:  5, y: 0, z: -10 },
-  cone:    { x: -5, y: 0, z: -20 },
-  sphere:  { x:  5, y: 0, z: -20 },
+  cube:     { x: -5, y: 0, z: -10 },
+  pyramid:  { x:  5, y: 0, z: -10 },
+  cone:     { x: -5, y: 0, z: -20 },
+  sphere:   { x:  5, y: 0, z: -20 },
+  cylinder: { x:  0, y: 0, z: -30 },
 };
 
 // Exact XZ collider specs per type (spec §6).
 const TYPE_COLLIDERS = {
-  cube:    { shape: 'aabb',   half: 1.0 },
-  pyramid: { shape: 'aabb',   half: 1.0 },
-  cone:    { shape: 'circle', radius: 1.0 },
-  sphere:  { shape: 'circle', radius: 1.5 },
+  cube:     { shape: 'aabb',   half: 1.0 },
+  pyramid:  { shape: 'aabb',   half: 1.0 },
+  cone:     { shape: 'circle', radius: 1.0 },
+  sphere:   { shape: 'circle', radius: 1.5 },
+  cylinder: { shape: 'circle', radius: 1.0 },
 };
 
 const MIN_GAP           = 1.5;   // minimum clear gap between object edges (spec §14)
@@ -35,12 +40,16 @@ const FLOOR_HALF        = 50;
 const SPAWN_LIMIT       = FLOOR_HALF - FLOOR_MARGIN;  // ±47 U
 const MAX_ATTEMPTS      = 150;
 
+// Tight scatter: physics resolves final positions, so objects can start close.
+const SCATTER_LIMIT = 10;   // ±10 U XZ from origin
+const MIN_XZ_DIST   = 1.0;  // only avoid exact same-spot starts to prevent impulse explosions
+
 const PLAYER_SPAWN_XZ = { x: 0, z: 12 };  // XZ position where the player starts
 
 // Per-session nonce: positions differ between page loads but are
 // stable within a session (same index → same position on that load).
 const SESSION_SEED = Math.floor(Math.random() * 0xFFFFFF);
-const TYPE_SEEDS   = { cube: 1, pyramid: 2, cone: 3, sphere: 4 };
+const TYPE_SEEDS = { cube: 1, pyramid: 2, cone: 3, sphere: 4, cylinder: 5 };
 
 function seededRand(seed) {
   const x = Math.sin(seed * 127.1 + 311.7) * 43758.5453;
@@ -65,19 +74,20 @@ function clearanceCollider(type, x, z) {
 }
 
 export class ObjectSpawner {
-  constructor(world, settings) {
+  constructor(world, settings, physicsWorld = null) {
     this.world = world;
     this.settings = settings;
+    this.physicsWorld = physicsWorld;
     this.reconcile();
   }
 
   reconcile() {
-    const desired = {
-      cube:    this.settings.get('objects.count.cube')    ?? 1,
-      pyramid: this.settings.get('objects.count.pyramid') ?? 1,
-      cone:    this.settings.get('objects.count.cone')    ?? 1,
-      sphere:  this.settings.get('objects.count.sphere')  ?? 1,
-    };
+    const desired = Object.fromEntries(
+      Object.keys(TYPE_FACTORIES).map(type => [
+        type,
+        this.settings.get(`objects.count.${type}`) ?? 1,
+      ])
+    );
 
     for (const type of Object.keys(TYPE_FACTORIES)) {
       const current = this.world.getByType(type).slice().sort((a, b) => (a.index ?? 0) - (b.index ?? 0));
@@ -92,7 +102,14 @@ export class ObjectSpawner {
         }
       }
 
-      for (const object of toRemove) this.world.remove(object);
+      for (const object of toRemove) {
+        this.world.remove(object);
+        // Remove matching physics body
+        if (this.physicsWorld) {
+          const body = this.physicsWorld.bodies.find(b => b.sceneObject === object);
+          if (body) this.physicsWorld.remove(body);
+        }
+      }
 
       const remaining = this.world.getByType(type).length;
       for (let i = remaining; i < targetCount; i += 1) this.addObject(type, i);
@@ -109,38 +126,40 @@ export class ObjectSpawner {
 
     const object = new Factory(index, position);
     this.world.add(object);
+
+    // Create a physics body and link it to the scene object
+    if (this.physicsWorld) {
+      const body = new PhysicsBody({ objectType: type, position });
+      body.sceneObject = object;
+      body.active      = true; // slider-added objects start active (drop immediately)
+      this.physicsWorld.add(body);
+    }
+
     return object;
   }
 
   _findFreePosition(type, index) {
+    // Physics resolves overlaps at runtime — we only need to avoid spawning
+    // two objects at the exact same XZ point (which would cause impulse explosions).
     const baseSeed = (TYPE_SEEDS[type] * 99991 + index * 7919 + SESSION_SEED) & 0xFFFFFF;
 
-    for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
+    for (let attempt = 0; attempt < 20; attempt++) {
       const s = (baseSeed + attempt * 1031) & 0xFFFFFF;
-      const x = (seededRand(s)     * 2 - 1) * SPAWN_LIMIT;
-      const z = (seededRand(s + 1) * 2 - 1) * SPAWN_LIMIT;
-      if (this._isFree(type, x, z)) return { x, y: 0, z };
+      const x = (seededRand(s)     * 2 - 1) * SCATTER_LIMIT;
+      const z = (seededRand(s + 1) * 2 - 1) * SCATTER_LIMIT;
+      const tooClose = this.world.objects.some(
+        obj => Math.hypot(x - obj.position.x, z - obj.position.z) < MIN_XZ_DIST
+      );
+      if (!tooClose) return { x, y: 0, z };
     }
 
-    // All attempts exhausted — fall back to last candidate regardless.
+    // Fallback: place anywhere in scatter area
     const s = baseSeed & 0xFFFFFF;
-    return { x: (seededRand(s) * 2 - 1) * SPAWN_LIMIT, y: 0, z: (seededRand(s + 1) * 2 - 1) * SPAWN_LIMIT };
-  }
-
-  _isFree(type, x, z) {
-    // Keep away from player spawn point.
-    if (Math.hypot(x - PLAYER_SPAWN_XZ.x, z - PLAYER_SPAWN_XZ.z) < PLAYER_SPAWN_DIST) return false;
-
-    // Check clearance against every object already in the world.
-    const candidate = clearanceCollider(type, x, z);
-    if (!candidate) return true;
-
-    for (const obj of this.world.objects) {
-      const existing = objectCollider(obj);
-      if (existing && candidate.intersects(existing)) return false;
-    }
-
-    return true;
+    return {
+      x: (seededRand(s) * 2 - 1) * SCATTER_LIMIT,
+      y: 0,
+      z: (seededRand(s + 1) * 2 - 1) * SCATTER_LIMIT,
+    };
   }
 }
 

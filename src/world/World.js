@@ -40,11 +40,9 @@ export class World {
   }
 
   counts() {
-    const counts = { cube: 0, pyramid: 0, cone: 0, sphere: 0 };
+    const counts = {};
     for (const object of this.objects) {
-      if (counts[object.type] !== undefined) {
-        counts[object.type] += 1;
-      }
+      counts[object.type] = (counts[object.type] ?? 0) + 1;
     }
     return counts;
   }

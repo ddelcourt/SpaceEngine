@@ -20,6 +20,8 @@ export class SceneObject {
       z: position.z ?? 0,
     };
     this.rotationY = 0;
+    this.rotationX = 0;
+    this.rotationZ = 0;
     this.scale = scale;
     this.fill = fill;
     this.mesh = mesh;
@@ -34,6 +36,8 @@ export class SceneObject {
     p.push();
     p.translate(this.position.x, this.position.y + this.baseHeight / 2, this.position.z);
     p.rotateY(this.rotationY);
+    p.rotateX(this.rotationX);
+    p.rotateZ(this.rotationZ);
     p.scale(this.scale);
     p.noStroke();
 

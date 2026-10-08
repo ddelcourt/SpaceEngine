@@ -14,10 +14,11 @@ export class Settings {
       },
       objects: {
         count: {
-          cube: { type: 'number', default: 1, min: 0, max: 25, step: 1 },
-          pyramid: { type: 'number', default: 1, min: 0, max: 25, step: 1 },
-          cone: { type: 'number', default: 1, min: 0, max: 25, step: 1 },
-          sphere: { type: 'number', default: 1, min: 0, max: 25, step: 1 },
+          cube:     { type: 'number', default: 1, min: 0, max: 25, step: 1 },
+          pyramid:  { type: 'number', default: 1, min: 0, max: 25, step: 1 },
+          cone:     { type: 'number', default: 1, min: 0, max: 25, step: 1 },
+          sphere:   { type: 'number', default: 1, min: 0, max: 25, step: 1 },
+          cylinder: { type: 'number', default: 1, min: 0, max: 25, step: 1 },
         },
       },
       interaction: {

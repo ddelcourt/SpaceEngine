@@ -80,4 +80,12 @@ export class MeshBuilder {
       },
     };
   }
+
+  static cylinder() {
+    return {
+      render: (p) => {
+        p.cylinder(1, 2, 20, 1, true, true);
+      },
+    };
+  }
 }
