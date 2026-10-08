@@ -12,6 +12,21 @@ The driving idea: build a solid technical foundation first, then layer interacti
 
 ---
 
+## v0.2 — Cylinder Primitive + Physics Drop
+
+### What's new
+
+**Cylinder primitive**  
+A fifth volume — cylinder — joins the primitive collection alongside cube, pyramid, cone, and sphere. It is registered identically to all other types: one entry in each of the six registration points (`TYPE_FACTORIES`, `FIXED_POSITIONS`, `TYPE_COLLIDERS`, `TYPE_SEEDS`, `RADII`, settings schema) plus its own class file and mesh method. No special-casing.
+
+**Random drop order at startup**  
+On launch, primitives no longer fall in type-group order (all cubes, then all pyramids…). The physics body queue is Fisher-Yates shuffled before the `DropAnimator` releases them, so every reload produces a different interleaved drop sequence.
+
+**Generic count reconciliation**  
+`ObjectSpawner.reconcile()` now derives desired counts directly from `TYPE_FACTORIES` instead of a hardcoded per-type object. `World.counts()` is likewise fully dynamic. Adding a future primitive requires no changes to either method.
+
+---
+
 ## v0.1 — 3D World with User Interaction
 
 This first milestone establishes the complete interactive foundation of the engine.
@@ -22,7 +37,7 @@ This first milestone establishes the complete interactive foundation of the engi
 Walk with `W A S D`, look with the mouse. Click the canvas to enter pointer lock. Press `Escape` to release. Movement is delta-time normalised and collision-aware.
 
 **3D scene**  
-Four primitive types — cube, sphere, cone, pyramid — scattered randomly across the scene using seeded placement (stable across reloads). All primitives sit on a flat ground grid that fades with distance.
+Five primitive types — cube, sphere, cone, pyramid, cylinder — scattered randomly across the scene using seeded placement (stable across reloads). All primitives sit on a flat ground grid that fades with distance.
 
 **Hover and selection**  
 Look at any object. The reticle turns green, and the info panel slides in with the object's name and position. Click or press `E` to select. Selected objects glow with a golden ring at their base.
@@ -87,6 +102,7 @@ SpaceEngine/
     │   ├── Raycaster.js     # Sphere ray-intersection, configurable hotspot
     │   └── SelectionManager.js
     ├── physics/
+    │   ├── PhysicsWorld.js  # Rigid-body simulation, gravity, sleep, body-body collision
     │   ├── CollisionSystem.js
     │   ├── CircleCollider.js
     │   └── AABBCollider.js
@@ -98,11 +114,13 @@ SpaceEngine/
         ├── World.js
         ├── SceneObject.js   # Base class: draw, state, hover/select visuals
         ├── ObjectSpawner.js # Seeded random placement, count reconciliation
+        ├── DropAnimator.js  # Staggered startup drop queue
         ├── MeshBuilder.js   # Primitive mesh factories with explicit normals
         ├── Cube.js
         ├── Pyramid.js
         ├── Cone.js
-        └── Sphere.js
+        ├── Sphere.js
+        └── Cylinder.js
 ```
 
 ---
