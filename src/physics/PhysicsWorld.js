@@ -5,6 +5,7 @@ const RADII = {
   pyramid:  1.2,
   cone:     1.0,
   sphere:   1.5,
+  cylinder: 1.2,
 };
 
 // +Y = UP in this engine. Floor is at Y = 0. Objects in the sky have positive Y.

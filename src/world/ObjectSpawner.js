@@ -2,6 +2,7 @@ import { Cube } from './Cube.js';
 import { Pyramid } from './Pyramid.js';
 import { Cone } from './Cone.js';
 import { Sphere } from './Sphere.js';
+import { Cylinder } from './Cylinder.js';
 import { PhysicsBody } from '../physics/PhysicsWorld.js';
 
 const TYPE_FACTORIES = {
@@ -9,6 +10,7 @@ const TYPE_FACTORIES = {
   pyramid: Pyramid,
   cone: Cone,
   sphere: Sphere,
+  cylinder: Cylinder,
 };
 
 // First instance of each type always uses its canonical scene position (spec §6).
@@ -17,6 +19,7 @@ const FIXED_POSITIONS = {
   pyramid:  { x:  5, y: 0, z: -10 },
   cone:     { x: -5, y: 0, z: -20 },
   sphere:   { x:  5, y: 0, z: -20 },
+  cylinder: { x:  5, y: 0, z: -30 },
 };
 
 
@@ -27,7 +30,7 @@ const MIN_XZ_DIST   = 1.0;  // only avoid exact same-spot starts to prevent impu
 // Per-session nonce: positions differ between page loads but are
 // stable within a session (same index → same position on that load).
 const SESSION_SEED = Math.floor(Math.random() * 0xFFFFFF);
-const TYPE_SEEDS = { cube: 1, pyramid: 2, cone: 3, sphere: 4 };
+const TYPE_SEEDS = { cube: 1, pyramid: 2, cone: 3, sphere: 4, cylinder: 5 };
 
 function seededRand(seed) {
   const x = Math.sin(seed * 127.1 + 311.7) * 43758.5453;
