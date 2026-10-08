@@ -4,6 +4,20 @@ A lightweight browser-based 3D first-person inspection and object-editing experi
 
 ---
 
+## Controls
+
+| Input | Action |
+|---|---|
+| `W A S D` | Move |
+| Mouse | Look |
+| Click canvas | Lock pointer |
+| `Escape` | Release pointer lock |
+| Mouse clcik / `E`| Select / deselect object |
+| `Tab` | Toggle control pane |
+| `Enter` | Toggle fullscreen |
+
+---
+
 ## What it is
 
 Space Engine is a modular 3D engine designed to evolve into a gallery-like spatial application — a place where you can walk around objects, inspect them up close, select and style them, and persist your changes across sessions.
@@ -48,10 +62,11 @@ Press `Tab` to show or hide the left-side panel. Every setting — field of view
 |---|---|
 | `W A S D` | Move |
 | Mouse | Look |
-| Click canvas | Lock pointer / Select object |
+| Click canvas | Lock pointer |
 | `E` | Select / deselect object |
 | `Escape` | Release pointer lock |
 | `Tab` | Toggle control pane |
+| `Enter` | Toggle fullscreen |
 
 ---
 
@@ -151,4 +166,4 @@ The project is delivered in eight slices:
 
 ## License
 
-MIT
+Creative Commons CC-BY-NC
