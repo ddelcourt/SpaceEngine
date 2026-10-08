@@ -12,15 +12,12 @@ The driving idea: build a solid technical foundation first, then layer interacti
 
 ---
 
-## v0.2 — Cylinder Primitive + Physics Drop
+## v0.2 — Physics Drop
 
 ### What's new
 
-**Cylinder primitive**  
-A fifth volume — cylinder — joins the primitive collection alongside cube, pyramid, cone, and sphere. It is registered identically to all other types: one entry in each of the six registration points (`TYPE_FACTORIES`, `FIXED_POSITIONS`, `TYPE_COLLIDERS`, `TYPE_SEEDS`, `RADII`, settings schema) plus its own class file and mesh method. No special-casing.
-
 **Random drop order at startup**  
-On launch, primitives no longer fall in type-group order (all cubes, then all pyramids…). The physics body queue is Fisher-Yates shuffled before the `DropAnimator` releases them, so every reload produces a different interleaved drop sequence.
+On launch, primitives no longer fall in type-group order. The physics body queue is Fisher-Yates shuffled before the `DropAnimator` releases them, so every reload produces a different interleaved drop sequence.
 
 **Generic count reconciliation**  
 `ObjectSpawner.reconcile()` now derives desired counts directly from `TYPE_FACTORIES` instead of a hardcoded per-type object. `World.counts()` is likewise fully dynamic. Adding a future primitive requires no changes to either method.
@@ -29,7 +26,7 @@ On launch, primitives no longer fall in type-group order (all cubes, then all py
 
 ## v0.1 — 3D World with User Interaction
 
-This first milestone establishes the complete interactive foundation of the engine.
+Complete interactive foundation of the engine.
 
 ### What works
 
