@@ -26,6 +26,18 @@ The driving idea: build a solid technical foundation first, then layer interacti
 
 ---
 
+## v0.3 — Selection Pulse
+
+### What's new
+
+**Map-pin ripple on selection**  
+Selecting an object now triggers a slow-expanding ripple ring at its base — matching the object's green colour — that grows outward and fades over a 4-second cycle, like a map-location ping. The static inner ring is hidden when selected; only the ripple remains.
+
+**Controls documented at the top**  
+The controls table has been moved to the top of the README and updated to include the missing `Enter` → Toggle fullscreen binding.
+
+---
+
 ## v0.2 — Physics Drop
 
 ### What's new
